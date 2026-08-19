@@ -188,7 +188,7 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
-numprocs=4
+numprocs=2
 startsecs=0
 stopwaitsecs=3600
 stdout_logfile=/var/log/worker-laravel.log
@@ -221,15 +221,15 @@ user = www-data
 group = www-data
 listen.owner = www-data
 listen.group = www-data
-; Sized for a small VPS: 50 children x a 512M limit is far more than the box
-; has, and oversubscribing children on a CPU-bound box costs more in context
-; switching than it buys in concurrency. Raise this only after checking
-; free memory / core count — roughly (available RAM - 1G) / 150M.
+; Sized for a 1 vCPU / 2 GB box that also runs Postgres alongside it:
+; (available RAM - 1G) / 150M works out to ~6 children here. Oversubscribing
+; children on a CPU-bound box costs more in context switching than it buys in
+; concurrency. Raise this only after re-checking free memory and core count.
 pm = dynamic
-pm.max_children = 20
-pm.start_servers = 4
-pm.min_spare_servers = 2
-pm.max_spare_servers = 8
+pm.max_children = 6
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
 ; Recycle children so a leak in one request can't bloat a worker forever.
 pm.max_requests = 500
 clear_env = no
@@ -254,10 +254,11 @@ php_admin_value[session.save_path] = /tmp
 ; The codebase is ~25,000 PHP files (21.5k of them in vendor: Laravel,
 ; Filament, tenancy, the payment SDKs). PHP's defaults cache 10,000 files in
 ; 128M, so the cache fills mid-warmup and every subsequent miss is a full
-; parse+compile — on every request, forever. Sized below for the real count.
+; parse+compile — on every request, forever. 256M is what fits on a 2 GB box
+; that also hosts Postgres; the disk file_cache below absorbs any overflow.
 opcache.enable=1
-opcache.memory_consumption=384
-opcache.interned_strings_buffer=32
+opcache.memory_consumption=256
+opcache.interned_strings_buffer=16
 ; Rounded up to a prime internally; comfortably above the 25k files on disk.
 opcache.max_accelerated_files=32531
 ; The container image is immutable, so 60s revalidation is plenty. It is
