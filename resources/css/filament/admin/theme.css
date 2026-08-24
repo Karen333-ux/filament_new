@@ -1,0 +1,54 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/*
+ | Design tokens
+ |
+ | Filament resolves every component's type and corner radius from these, so
+ | overriding them here restyles the whole panel rather than a single page.
+ | The panel's palette and font family are set in AdminPanelProvider.
+ */
+@theme {
+    --radius-md: 0.625rem;
+    --radius-lg: 0.875rem;
+    --radius-xl: 1.125rem;
+}
+
+/*
+ | Sidebar
+ |
+ | The stock panel paints the sidebar and the content area the same colour and
+ | separates them with a hairline border. Giving the sidebar its own surface
+ | makes the navigation read as a distinct region.
+ */
+.fi-sidebar {
+    background-color: var(--color-gray-50);
+}
+
+.dark .fi-sidebar {
+    background-color: var(--color-gray-950);
+}
+
+/*
+ | Cards and tables
+ |
+ | Softer elevation than the default hairline border, which suits the larger
+ | corner radius set above.
+ */
+.fi-section,
+.fi-ta-ctn,
+.fi-wi {
+    box-shadow:
+        0 1px 2px 0 rgb(0 0 0 / 0.04),
+        0 4px 12px -2px rgb(0 0 0 / 0.06);
+}
+
+.dark .fi-section,
+.dark .fi-ta-ctn,
+.dark .fi-wi {
+    box-shadow:
+        0 1px 2px 0 rgb(0 0 0 / 0.3),
+        0 4px 12px -2px rgb(0 0 0 / 0.35);
+}

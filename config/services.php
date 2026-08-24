@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'bot_username' => env('TELEGRAM_BOT_USERNAME'),
+
+        // With this on, anyone who can press the widget gets an account, and
+        // User::canAccessPanel() currently returns true for everybody — so it
+        // also gets them into the admin panel. Leave it off in production and
+        // link accounts by setting users.telegram_id by hand.
+        'auto_register' => (bool) env('TELEGRAM_LOGIN_AUTO_REGISTER', false),
+    ],
+
 ];
