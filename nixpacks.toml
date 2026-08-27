@@ -128,6 +128,11 @@ php -i 2>/dev/null | grep -E "^opcache\.(enable|memory_consumption|max_accelerat
 cd /app && php artisan migrate --force --path=database/migrations 2>&1 | tee /var/log/migration.log || true
 cd /app && php artisan permissions:sync 2>&1 | tee /var/log/permissions-sync.log || true
 
+# Build the cache-layer entries before the container starts serving, so the
+# first request after a deploy is a hit rather than the one that pays to
+# rebuild them.
+cd /app && php artisan cache:warm --invalidate 2>&1 | tee /var/log/cache-warm.log || true
+
 # Publish Livewire & Filament assets so nginx can serve them as static files
 cd /app && php artisan vendor:publish --tag=livewire:assets --force 2>&1 || true
 cd /app && php artisan filament:assets 2>&1 || true
