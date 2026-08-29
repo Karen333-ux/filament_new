@@ -32,6 +32,10 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->font('Figtree')
             ->login()
+            // Gives every user a page to change their own name, email and password.
+            // Without it the only way to rotate a password is artisan on the server,
+            // which means whoever needs it also needs shell access.
+            ->profile()
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn (): View => view('auth.telegram-login-button'),
